@@ -23,7 +23,10 @@ class rigidBody(body):
                 "x_axis": {"type": "vector", "value": [1.,0.,0.]},
                 "y_axis": {"type": "vector", "value": [0.,1.,0.]},
                 "z_axis": {"type": "vector", "value": [0.,0.,1.]},
-                "color": {"type": "colorvector", "value": [0,0,0,0]}
+                "color": {"type": "colorvector", "value": [0,0,0,0]},
+                "i1_axis": {"type": "vector", "value": [1.,0.,0.]},
+                "i2_axis": {"type": "vector", "value": [0.,1.,0.]},
+                "i3_axis": {"type": "vector", "value": [0.,0.,1.]}
             }
 
             body.__init__(self,"Rigid_EulerParameter_PAI",text=kwargs["text"],parameter=parameter)
@@ -61,3 +64,28 @@ class rigidBody(body):
         transform = vtkTransform()
         transform.SetMatrix(vtk_matrix)
         bodyActor.SetUserTransform(transform)
+
+    def animate(self,COGPos,rotation):
+        for actor in self.actors:
+            transform_matrix = np.eye(4)
+
+            iniPAI = np.eye(3) 
+            iniPAI[:3, 0] = np.array(self.parameter["i1_axis"]["value"])
+            iniPAI[:3, 1] = np.array(self.parameter["i2_axis"]["value"])
+            iniPAI[:3, 2] = np.array(self.parameter["i3_axis"]["value"])
+            iniRot = np.eye(3)
+            iniRot[:3, 0] = np.array(self.parameter["x_axis"]["value"])
+            iniRot[:3, 1] = np.array(self.parameter["y_axis"]["value"])
+            iniRot[:3, 2] = np.array(self.parameter["z_axis"]["value"])
+            diffRot = np.linalg.matmul(iniPAI.T,iniRot)
+            posLocal = np.linalg.matmul(iniPAI.T,np.array(self.parameter["position"]["value"]) - np.array(self.parameter["COG"]["value"]))
+            position = COGPos + np.linalg.matmul(rotation,posLocal)
+            transform_matrix[:3, :3] = np.linalg.matmul(rotation,diffRot)
+            transform_matrix[:3, 3] = position
+
+            vtk_matrix = vtkMatrix4x4()
+            vtk_matrix.DeepCopy(transform_matrix.ravel()) 
+
+            transform = vtkTransform()
+            transform.SetMatrix(vtk_matrix)
+            actor.SetUserTransform(transform)

@@ -49,5 +49,13 @@ newModel.showModel(renderer)
 
 # Render- und Interaktionsloop starten
 renWin.Render()
-interactor.Start()
+interactor.Initialize()
 #-----------------------------------------------------------------------------
+
+#animation
+#-----------------------------------------------------------------------------
+newModel.animateResult("Animation/test.h5", renWin)
+#-----------------------------------------------------------------------------
+
+# Interaktionsloop starten
+interactor.Start()
