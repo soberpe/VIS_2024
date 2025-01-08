@@ -73,3 +73,7 @@ class mbsModel:
     def showModel(self, renderer):
         for object in self.__mbsObjectList:
             object.show(renderer)
+    
+    def hideModel(self, renderer):
+        for object in self.__mbsObjectList:
+            object.hide(renderer)
