@@ -107,11 +107,11 @@ def read_hdf5_file(h5Path):
         with h5py.File(h5Path, "r") as f:
             # Read timestamps
             timestamps = f["timestamps"][:]
-            body_ids = [key for key in f.keys() if key.startswith("bodyID")]
+            body_ids = [int(key.replace("bodyID:", "")) for key in f.keys() if key.startswith("bodyID")]
             for timestep_index in range(timestamps.size):
                 for body_id in body_ids:
-                    print(f[f"{body_id}/positions"][timestep_index])
-                    print(f[f"{body_id}/rotations"][timestep_index])
+                    print(f[f"bodyID: {body_id}/positions"][timestep_index])
+                    print(f[f"bodyID: {body_id}/rotations"][timestep_index])
 
     except FileNotFoundError:
         print(f"File not found: {h5Path}")
